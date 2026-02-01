@@ -10,6 +10,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 )
@@ -191,8 +192,13 @@ func run() error {
 
 					result = strings.ReplaceAll(result, `\n`, "\n")
 					result = strings.ReplaceAll(result, `\t`, "\t")
-					tmpFileName := "/tmp" + strings.TrimSuffix(uri.Path, ".class") + ".java"
-					targetURI := "file://" + tmpFileName
+					tmpFileName := os.TempDir() + strings.TrimSuffix(uri.Path, ".class") + ".java"
+					var targetURI string
+					if runtime.GOOS == "windows" {
+						targetURI = "file:///" + tmpFileName
+					} else {
+						targetURI = "file://" + tmpFileName
+					}
 					m[targetURI] = uri.String()
 					if err := os.MkdirAll(filepath.Dir(tmpFileName), 0755); err != nil {
 						fmt.Fprintln(os.Stderr, "[jdtls-wrapper]", err.Error())
