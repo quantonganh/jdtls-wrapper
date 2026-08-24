@@ -30,6 +30,7 @@ type stdRequest struct {
 type Params struct {
 	Position     Position     `json:"position"`
 	TextDocument TextDocument `json:"textDocument"`
+	Range        *Range       `json:"range,omitempty"`
 }
 
 type TextDocument struct {
